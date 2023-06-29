@@ -10,18 +10,42 @@ function App() {
   const [rendered, setRendered] = useState(false)
   const [checkGame, setCheckGame] = useState(false)
   const [count, setCount] = useState(0)
+  // const [categories, setCategories] = useState([])
+  const [isFetched, setIsFetched] = useState(false)
+  const [options, setOptions] = useState([])
+  const [chosenOption, setChosenOption] = useState('')
 
   function startGame() {
     setIsGameStarted(prevState => !prevState)
   }
 
   useEffect(() => {
-    let isMounted = true
+    const getCategories = async () => {
+        const res = await fetch('https://opentdb.com/api_category.php')
+        const data = await res.json() 
+        optionsArray(data.trivia_categories)
+    }
+    getCategories()
+    setIsFetched(prevFetch => !prevFetch)
+  }, [])
 
+  const handleChange = (event) => {
+    setChosenOption(Number(event.target.value))
+    console.log(chosenOption)
+    setIsFetched(true)
+  }
+
+  function optionsArray(categories) {
+    setOptions(categories.map(item => ({name: item.name, value: item.id})))
+   }
+  
+  useEffect(() => {
+    let isMounted = true
     if (isGameStarted && isMounted){
+      console.log(chosenOption)
       async function getQuestions() {
       try {
-        const res = await fetch("https://opentdb.com/api.php?amount=5&type=multiple")
+        const res = await fetch(`https://opentdb.com/api.php?amount=5&category=${chosenOption}&type=multiple`)
         const data = await res.json()
         setQuestions(data.results)
         setRendered(true)
@@ -58,16 +82,23 @@ function App() {
           }
         })
 
-        const randomNum = (index) => Math.floor(Math.random() * index + 1)
-        
-        function radnomizeArray() {
-          
+        function radnomizeArray(array) {
+          const randomNum = () => Math.floor(Math.random() * array.length)
+          const newArray = new Array(array.length)
+
+          for (let i = 0; i < newArray.length; i++) {
+            const randomIndex = randomNum()
+            if (randomIndex !== -1) {
+              newArray[i] = array.splice(randomIndex, 1)
+            }
+          }
+          return newArray.flat(newArray.length)
         }
 
         const newQuestion = {
           id: nanoid(),
           question: answer.question,
-          answer: answerObj
+          answer: radnomizeArray(answerObj)
         }
         return newQuestion
       })
@@ -105,7 +136,28 @@ function App() {
 
   function playAgain() {
      setCheckGame(prevCheck => !prevCheck)
+     setCount(0)
+      async function getQuestions() {
+        try {
+          const res = await fetch(`https://opentdb.com/api.php?amount=5&category=${chosenOption}&type=multiple`)
+          const data = await res.json()
+          setQuestions(data.results)
+          setRendered(true)
+        } catch (error) {
+          console.log("error")
+        }
+        }
+      getQuestions()
 
+  }
+
+  function takeMeHome() {
+    setIsGameStarted(prevGame => !prevGame)
+    setCount(0)
+    setQuestions([])
+    setDisplayQuestion([])
+    setRendered(false)
+    setChosenOption(10)
   }
 
   const questionElements = displayQuestion.map(item => 
@@ -120,34 +172,35 @@ function App() {
     
   )
 
+  const optionsElements = options.map(option => 
+  <option 
+    key={option.value} 
+    value={option.value}>{option.name}</option>)
+
   return (
       <main className={`${!isGameStarted ? "menu" : "game"}`}>
         {!isGameStarted ? <HomePage 
           startGame={startGame}
-        /> : 
-        questionElements
+          optionsElements={optionsElements}
+          handleChange={() => handleChange(event)} 
+        /> :
+          <></>
         }
-        {checkGame && <span> {count} / 5 correct Answers</span>}
-        {rendered && <button 
-          className="check-btn" 
-          onClick={checkGame ? playAgain : checkResults}>
-            {checkGame ? "Play again" : "Check answers"}
-            </button>}
+       {rendered ? 
+       <div className='content-container'>
+        <>
+          <i className="fa-solid fa-arrow-left" onClick={takeMeHome}></i>
+          {questionElements}
+        </>
+          {checkGame && <p className='score'> {count} / 5 correct Answers</p>}
+          {rendered && <button 
+            className="check-btn" 
+            onClick={checkGame ? playAgain : checkResults}>
+              {checkGame ? "Play again" : "Check answers"}
+              </button>}
+        </div> : <></>}
       </main>
   )
 }
 
 export default App
-
-
-
-// setDisplayQuestion(prevQuestion => 
-//   prevQuestion.map(item => {
-//     return {
-//       ...item, 
-//       answer: item.answer.map(item => 
-//         {return item.id === id ? 
-//           {...item, isHeld: !item.isHeld} : 
-//           {...item, isHeld: false}})}
-//   })
-// ) 

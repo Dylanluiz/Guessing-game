@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-* {
+*, *::before, *::after{
   box-sizing: border-box;
 }
 
@@ -27,11 +27,13 @@ main {
 }
 
 .home--container {
+  position: relative;
   display: flex;
   height: 100vh;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 .site-name {
@@ -40,6 +42,30 @@ main {
   font-size: 31.25px;
   font-weight: 700;
   margin: 0;
+}
+
+.site-name::before {
+  position: absolute;
+  content: '';
+  height: 200px;
+  width: 250px;
+  border-radius: 40%;
+  background-color: #FFFAD1;
+  right: -90px;
+  top: -55px;
+  transform: rotate(-130.491deg);
+}
+
+.site-name::after {
+  position: absolute;
+  content: '';
+  height: 250px;
+  width: 250px;
+  background-color: #DEEBF8;
+  left: -80px;
+  bottom: -120px;
+  border-radius: 45%;
+  transform: rotate(-30deg);
 }
 
 .site-description {
@@ -60,6 +86,7 @@ main {
   font-weight: 500;
   border: none;
   padding: 15px 50px;
+  cursor: pointer;
 }
 
 /* quesions page */
@@ -69,6 +96,16 @@ main {
   flex-direction: column;
   align-items: center;
   padding: 40px 40px 20px 40px;
+  height: fit-content;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .question-container {
@@ -82,8 +119,6 @@ main {
   align-items: stretch;
   flex-wrap: wrap;
   gap: 10px;
- 
-  /* width: 400px; */
 }
 
 .question {
@@ -105,13 +140,14 @@ main {
   flex: 1;
   font-family: Inter;
   font-weight: 500;
+  cursor: pointer;
 }
 
 hr {
   border: 0;
   clear:both;
   display:block;
-  width: 96%;               
+  width: 100%;               
   background: #DBDEF0;
   height: 1px;
   margin: 20px 0 ;
@@ -124,8 +160,154 @@ hr {
   color: #F5F7FB;
   background-color: #4D5B9E;
   border: none;
-  padding: 15px 30px;
-  border-radius: 10px;
-  font-size: 1rem;
+  padding: 12px 35px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-family: Inter;
+  cursor: pointer;
+}
+
+.check-btn::before {
+  position: absolute;
+  content: '';
+  height: 150px;
+  width: 150px;
+  background-color: #DEEBF8;
+  left: -70px;
+  bottom: -100px;
+  border-radius: 45%;
+  transform: rotate(-50deg);
+}
+
+.check-btn::after {
+  position: absolute;
+  content: '';
+  height: 250px;
+  width: 350px;
+  background-color: #FFFAD1;
+  right: -240px;
+  top: -160px;
+  border-radius: 45%;
+  transform: rotate(60deg);
+}
+
+/* score */
+
+.score {
+  color: #293264;
+  font-weight: 700;
+  margin: 0;
+  display: inline;
   font-family: Inter;
 }
+
+/* options selector */
+
+.options-selector {
+  background-color: #DBDEF0;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: Inter;
+  cursor: pointer;
+}
+
+.options-selector::-webkit-scrollbar {
+  width: 20px;
+}
+
+.options-selector::-webkit-scrollbar-track {
+  border: rgb(180, 180, 180);
+  background-color: #DBDEF0;
+}
+
+.options-selector::-webkit-scrollbar-thumb {
+  background-color: #293264;
+  border: none;
+  border-radius: 20px;
+}
+
+/* back button */
+
+.fa-arrow-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 15px;
+  font-size: 20px;
+  color: #293264;
+  cursor: pointer;
+}
+
+
+@media (min-width: 710px) {
+  .game {
+    height: 100vh;
+    justify-content: center;
+  }
+
+  .question-container {
+    max-width: 630px;
+  }
+
+  .check-btn::before {
+    left: -150px;
+    bottom: -200px;
+    width: 300px;
+    height: 300px;
+  }
+
+  .check-btn::after {
+    width: 250px;
+    height: 250px;
+    right: -120px;
+    top: -120px;
+  }
+
+  .site-name::before {
+    height: 200px;
+    width: 350px;
+    right: -100px;
+    top: -55px;
+  }
+  
+  .site-name::after {
+    height: 350px;
+    width: 250px;
+    left: -80px;
+    bottom: -120px;
+  }
+
+}
+
+@media (min-width: 1024px) {
+  .check-btn::before {
+    left: -200px;
+    bottom: -250px;
+    width: 400px;
+    height: 400px;
+  }
+
+  .check-btn::after {
+    width: 350px;
+    height: 300px;
+    right: -150px;
+    top: -120px;
+  }
+
+  .site-name::before {
+    height: 300px;
+    width: 450px;
+    right: -130px;
+    top: -55px;
+  }
+  
+  .site-name::after {
+    height: 450px;
+    width: 300px;
+    left: -80px;
+    bottom: -120px;
+  }
+
+}
+
