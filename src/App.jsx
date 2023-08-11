@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import HomePage from './components/HomePage'
 import QuestionPage from './components/QuestionPage'
+import Level from './components/Level'
 import { nanoid } from 'nanoid'
 
 function App() {
@@ -10,10 +11,37 @@ function App() {
   const [rendered, setRendered] = useState(false)
   const [checkGame, setCheckGame] = useState(false)
   const [count, setCount] = useState(0)
-  // const [categories, setCategories] = useState([])
+  // const [categories, setCategories] = useState([]) 
   const [isFetched, setIsFetched] = useState(false)
   const [options, setOptions] = useState([])
   const [chosenOption, setChosenOption] = useState('')
+
+  const [player, setPlayer] = useState({})
+  const initialPlayer = {level: 0, xp: 0, xpStack: 100}
+  const [currentLevel, setCurrentLevel] = useState()
+  const [currentXp, setCurrentXp] = useState()
+  const [xpStack, setXpStack] = useState()
+
+  useEffect(() => {
+    const isData = localStorage.getItem('player')
+
+    if (isData) {
+      const parsedData = JSON.parse(isData)
+      setPlayer(parsedData)
+      setCurrentLevel(player.currentLevel)
+      setCurrentXp(player.currentXp)
+      setXpStack(player.xpStack)
+    
+    } else {
+       setPlayer(initialPlayer)  
+    }
+
+  }, [])
+
+  useEffect(() => {
+      localStorage.setItem('player', JSON.stringify(player))
+ 
+  }, [player])
 
   function startGame() {
     setIsGameStarted(prevState => !prevState)
@@ -128,12 +156,13 @@ function App() {
     displayQuestion.map(item => {
       item.answer.map(item => {
         if (item.isHeld && item.isRight) {
-          setCount(prevCount => prevCount + 1)
+          setCount(prevCount => prevCount + 1)        
         }
       })
     })
   }
 
+  
   function playAgain() {
      setCheckGame(prevCheck => !prevCheck)
      setCount(0)
@@ -148,7 +177,6 @@ function App() {
         }
         }
       getQuestions()
-
   }
 
   function takeMeHome() {
@@ -158,7 +186,29 @@ function App() {
     setDisplayQuestion([])
     setRendered(false)
     setChosenOption(10)
+    setCheckGame(false)
   }
+
+ useEffect(() => {
+  function calcXp() {
+    const xpGain = count * 10
+    setPlayer(prev => ({
+        level: prev.level, 
+        xp: prev.xp + xpGain, 
+        xpStack: prev.xpStack + xpGain
+    }))
+    
+    if (player.xpStack >= 200) {
+      setPlayer(prev => ({
+        ...player,
+        level: prev.level + 1,
+        xpStack: prev.xpStack - 100 + 10
+      }))
+    }
+    
+  }
+  calcXp() 
+ }, [count])
 
   const questionElements = displayQuestion.map(item => 
     <QuestionPage 
@@ -179,6 +229,9 @@ function App() {
 
   return (
       <main className={`${!isGameStarted ? "menu" : "game"}`}>
+        <Level
+          player={player}
+        />
         {!isGameStarted ? <HomePage 
           startGame={startGame}
           optionsElements={optionsElements}
@@ -195,7 +248,7 @@ function App() {
           {checkGame && <p className='score'> {count} / 5 correct Answers</p>}
           {rendered && <button 
             className="check-btn" 
-            onClick={checkGame ? playAgain : checkResults}>
+            onClick={checkGame ? () => playAgain() : () => checkResults()}>
               {checkGame ? "Play again" : "Check answers"}
               </button>}
         </div> : <></>}
