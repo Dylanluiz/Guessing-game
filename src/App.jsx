@@ -242,7 +242,9 @@ function App() {
        {rendered ? 
        <div className='content-container'>
         <>
-          <i className="fa-solid fa-arrow-left" onClick={takeMeHome}></i>
+          <div className='arrow-container' onClick={takeMeHome}>
+            <i className="fa-solid fa-arrow-left"></i>
+          </div>
           {questionElements}
         </>
           {checkGame && <p className='score'> {count} / 5 correct Answers</p>}

@@ -230,6 +230,10 @@ hr {
 /* back button */
 
 .fa-arrow-left {
+  cursor: pointer;
+}
+
+.arrow-container {
   position: absolute;
   left: 0;
   top: 0;
@@ -237,6 +241,10 @@ hr {
   font-size: 20px;
   color: #293264;
   cursor: pointer;
+  min-width: 17.5px;
+  min-height: 20px;
+  cursor: pointer;
+  z-index: 2;
 }
 
 /* level system */
